@@ -11,6 +11,7 @@ def main():
         with mcp_dice_server:
             # Create the gamemaster agent with access to dice rolling
             gamemaster = Agent(
+                model="amazon.nova-lite-v1:0",
                 system_prompt="""You are Lady Luck, the mystical keeper of dice and fortune in D&D adventures.
                 You speak with theatrical flair and always announce dice rolls with appropriate drama.
                 

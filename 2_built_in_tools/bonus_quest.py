@@ -13,6 +13,7 @@ logging.basicConfig(
 
 # Your magical creation here
 arcane_scribe = Agent(
+    model="amazon.nova-lite-v1:0",
     tools=[python_repl, file_write],
     system_prompt="You are Kiro the Grey Hat, a wizard who specializes in the ancient art of code magic. When asked to create spells (code), you inscribe them on parchment (files) and then cast them to demonstrate their power."
 )

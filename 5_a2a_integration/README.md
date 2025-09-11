@@ -42,10 +42,36 @@ Make sure you have completed the previous chapters and understand:
 - Tool creation with `@tool` decorator
 - MCP integration
 
+### 🔮 Knowledge Base Setup (REQUIRED)
+
+Before starting this chapter, you **MUST** create the D&D rules knowledge base:
+
+```bash
+cd 5_a2a_integration/utils
+python create_knowledge_base.py
+```
+
+**⚠️ IMPORTANT**: The script must be run from the `utils` folder where the PDF file is located. Running it from any other directory will fail with "PDF file not found" error.
+
+This will create the ChromaDB knowledge base that the Rules Agent needs to function properly.
+
 
 ## 🧙‍♂️ Part 1: Awakening the Sage of Rules
 
 Deep in the mystical archives, we've prepared a legendary **Knowledge Vault** for you! The ancient D&D Basic Rules have been transformed into magical text fragments, stored within the sacred `utils/dnd_knowledge_base/` ChromaDB. This enchanted repository contains all the wisdom needed to answer any rules question that adventurers might pose.
+
+### 🔮 How the Knowledge Vault Works
+
+The **ChromaDB Vector Database** system works like this:
+- **📄 PDF Processing**: The D&D Basic Rules PDF is split into text chunks (paragraphs)
+- **🧠 Embeddings**: Each chunk gets converted into vector embeddings for semantic search
+- **🔍 Smart Retrieval**: When you ask about rules, it finds the most relevant chunks using similarity search
+- **📚 Metadata**: Each chunk includes page numbers and source information for reference
+
+**Example Flow:**
+1. You ask: "What are dexterity checks?"
+2. ChromaDB finds relevant text chunks about dexterity
+3. Returns the rule text with page reference: "Page 12: A Dexterity check might reflect..."
 
 **The Sage's Sacred Duties:**
 - Interpreting ancient D&D laws and mechanics
@@ -96,6 +122,31 @@ Behold the **Character Chronicler** - master of heroic tales and legendary stati
 - **🏗️ `create_character`**: Births new heroes with full backstories and abilities
 - **🔍 `find_character_by_name`**: Locates heroes across the realm by name
 - **📜 `list_all_characters`**: Reveals all heroes in the chronicles
+
+### 🗃️ How the Character Database Works
+
+The **TinyDB Character System** operates like this:
+- **📊 Structured Data**: Characters are stored as Python dataclasses with stats, inventory, and metadata
+- **🔍 JSON Storage**: TinyDB saves everything in a simple `characters.json` file for easy inspection
+- **⚡ Fast Queries**: Uses Query objects to find characters by name, class, race, or any attribute
+- **🆔 Unique IDs**: Each character gets a UUID for reliable identification across sessions
+
+**Character Data Structure:**
+```python
+Character:
+  - character_id: "uuid-string"
+  - name: "Thorin Ironbeard"
+  - character_class: "Fighter"
+  - race: "Dwarf"
+  - stats: {strength: 16, dexterity: 12, ...}
+  - inventory: [{"item_name": "Sword", "quantity": 1}]
+  - level, experience, created_at...
+```
+
+**Example Flow:**
+1. Agent creates character with `create_character("Thorin", "Fighter", "Dwarf", ...)`
+2. TinyDB stores the character in `characters.json`
+3. Later queries like `find_character_by_name("Thorin")` retrieve the full character data
 
 **Study these legendary tools** to understand advanced patterns with dataclasses, databases, and complex character management!
 
