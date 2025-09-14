@@ -32,6 +32,10 @@ class QuestionRequest(BaseModel):
 def health_check():
     return {"status": "healthy"}
 
+@app.get("/messages")
+def get_messages():
+    return agent.messages
+
 @app.get("/user/{user_name}")
 def get_user(user_name):
     characters_db = TinyDB('./../character_agent/characters.json')
@@ -62,6 +66,7 @@ To communicate with agents:
 
 IMPORTANT: Always use the exact URLs shown by a2a_list_discovered_agents. Never invent or guess URLs.
 
+When you reply, please reply with a JSON (and ONLY A JSON, no text other than the json).
 Always respond in JSON format:
 {
     "response": "Your narrative response as Game Master",
@@ -70,31 +75,38 @@ Always respond in JSON format:
     "dices_rolls": [{"dice_type": "d20", "result": 15, "reason": "attack roll"}]
 }
 
-Be creative, engaging, and use your available tools to enhance the D&D experience."""
+Be creative, engaging, and use your available tools to enhance the D&D experience.
+
+Remember, the response should ONLY be a PURE json with no markdown or text arount it."""
+
+try:
+    # TODO: Create the A2A client with the A2AClientToolProvider and pass the list of the known agent urls
+    A2A_AGENT_URLS = [
+        "http://127.0.0.1:8000",  # Rules Agent
+        "http://127.0.0.1:8001",  # Character Agent
+    ]
+    a2a_client = A2AClientToolProvider(known_agent_urls=A2A_AGENT_URLS)
+
+    with mcp_client:
+        #TODO: Get MCP tools
+        mcp_tools = mcp_client.list_tools_sync()
+
+        #TODO: Create the gamemaster agent with both A2A and MCP tools
+        all_tools = list(a2a_client.tools) + mcp_tools
+        agent = Agent(
+            tools=all_tools,
+            system_prompt=SYSTEM_PROMPT
+        )
+    
+except Exception as e:
+    print(f"Error occurred: {str(e)}")
+    print("Internal server error")
 
 @app.post("/inquire")
 async def ask_agent(request: QuestionRequest):
     print("Processing request...")
     try:
-        # TODO: Create the A2A client with the A2AClientToolProvider and pass the list of the known agent urls
-        A2A_AGENT_URLS = [
-            "http://127.0.0.1:8000",  # Rules Agent
-            "http://127.0.0.1:8001",  # Character Agent
-        ]
-        a2a_client = A2AClientToolProvider(known_agent_urls=A2A_AGENT_URLS)
-        
         with mcp_client:
-            #TODO: Get MCP tools
-            mcp_tools = mcp_client.list_tools_sync()
-
-            #TODO: Create the gamemaster agent with both A2A and MCP tools
-            all_tools = list(a2a_client.tools) + mcp_tools
-            agent = Agent(
-                model="amazon.nova-lite-v1:0",
-                tools=all_tools,
-                system_prompt=SYSTEM_PROMPT
-            )
-            
             # Process the request
             response = agent(request.question)
             content = str(response)
