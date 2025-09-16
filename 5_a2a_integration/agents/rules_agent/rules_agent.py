@@ -70,7 +70,12 @@ agent = Agent(
     tools=[query_dnd_rules],
     name="Rules Agent", 
     description="Fast D&D rules lookup",
-    system_prompt="You have ONE tool: query_dnd_rules. Use it ONCE and answer immediately. Never call tools multiple times."
+    system_prompt="""
+    You are an expert of the DnD rules. 
+    You have ONE tool: query_dnd_rules which allow you to have access to a knowledge base
+    with the rules of the game.
+    Use it ONCE and answer immediately. Never call tools multiple times.
+    """
 )
 
 a2a_server = A2AServer(
