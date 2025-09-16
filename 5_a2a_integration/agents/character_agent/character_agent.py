@@ -145,8 +145,8 @@ agent = Agent(
     tools=[create_character, find_character_by_name, list_all_characters],
     callback_handler=None,
     name="Character Creator Agent",
-    description="""
-    Create and manage D&D characters with names, races, classes, stats, and backgrounds
+    system_prompt="""
+    You can create and manage D&D characters with names, races, classes, stats, and backgrounds.
     Roll the dices to generate stats_dic (ability scores). When rolling ability scores, remember the traditional method: roll 4d6, drop the lowest die.
     """,
 )
