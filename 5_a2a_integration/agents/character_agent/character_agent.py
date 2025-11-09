@@ -93,6 +93,7 @@ def create_character(
     Character details respecting the GameCharacters object fields.
     Roll a dice to generate the stats_dic (ability scores). 
     When rolling ability scores, remember the traditional method: roll 4d6, drop the lowest die.
+    using Korean language.
     
     Args:
         name: Character's name
@@ -148,6 +149,7 @@ You are a D&D character management specialist. When creating characters, always 
 method: roll 4d6 and drop the lowest die for each of the six abilities (Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma). 
 Use the appropriate tools to create, find, or list characters as requested. Provide clear confirmations when characters are created and 
 helpful summaries when characters are found. Keep responses focused and include relevant character details like class, race, and key stats."
+Using Korean language.
 """
 
 agent = Agent(
@@ -155,6 +157,8 @@ agent = Agent(
     # - model: optional
     # - tools: List the tools
     # - name: "Character Creator Agent"
+    tools=[find_character_by_name, list_all_characters, create_character],
+    name="Character Creator Agent",
     description= DESCRIPTION,
     system_prompt= SYSTEM_PROMPT
 )
@@ -162,8 +166,9 @@ agent = Agent(
 # TODO: Create an A2AServer instance with:
 # - agent: The agent instance created above
 # - port: 8001 (Character Agent port)
-a2a_server = None
+a2a_server = A2AServer(agent, port=8001)
 
 if __name__ == "__main__":
     # TODO: Start the A2A server
+    a2a_server.serve()
     pass

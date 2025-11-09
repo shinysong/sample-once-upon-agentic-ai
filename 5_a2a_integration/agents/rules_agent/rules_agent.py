@@ -71,6 +71,7 @@ Designed for quick consultation by other agents or players during gameplay.
 SYSTEM_PROMPT="""
 You are a D&D rules expert. When asked about rules, use the query_dnd_rules tool once to find the relevant rule, 
 then provide a clear, concise answer with the page reference. Keep responses brief and focused on the specific rule requested.
+output language is Korean.
 """
 
 agent = Agent(
@@ -78,6 +79,8 @@ agent = Agent(
     # - model: Optional
     # - tools: List containing the query_dnd_rules tool
     # - name: "Rules Agent"
+    tools=[query_dnd_rules],
+    name="Rules Agent",
     description= DESCRIPTION,
     system_prompt= SYSTEM_PROMPT
 )
@@ -85,8 +88,9 @@ agent = Agent(
 # TODO: Create an A2AServer instance with:
 # - agent: The agent instance created above
 # - port: 8000 (Rules Agent port)
-a2a_server = None
+a2a_server = A2AServer(agent, port=8000)
 
 if __name__ == "__main__":
     # TODO: Start the A2A server
+    a2a_server.serve()
     pass

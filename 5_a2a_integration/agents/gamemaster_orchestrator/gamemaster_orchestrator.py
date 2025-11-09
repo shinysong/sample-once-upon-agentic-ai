@@ -46,7 +46,9 @@ def get_user(user_name):
 
 # TODO: Create MCP Client for dice rolling service
 # Initialize MCPClient with a lambda that returns streamablehttp_client("http://localhost:8080/mcp")
-mcp_client = None
+mcp_client = MCPClient(
+    lambda: streamablehttp_client("http://127.0.0.1:8080/mcp")
+)
 
 # System prompt for the agent
 SYSTEM_PROMPT = """You are a D&D Game Master orchestrator with access to specialized agents and tools.
@@ -83,19 +85,22 @@ Always respond in JSON format:
 Be creative, engaging, and use your available tools to enhance the D&D experience.
 
 Remember, the response should ONLY be a PURE json with no markdown or text arount it.
+Using Korean language.
 """
 
 try:
     # TODO: Create the A2A client with the A2AClientToolProvider and pass the list of the known agent urls
-    A2A_AGENT_URLS = []
-
+    A2A_AGENT_URLS = ['http://127.0.0.1:8000', 'http://127.0.0.1:8001']
+    a2a_tools = A2AClientToolProvider(A2A_AGENT_URLS)
     with mcp_client:
         #TODO: Get MCP tools
-
+        mcp_tools = mcp_client.list_tools_sync()
+        all_tools = mcp_tools + a2a_tools
         #TODO: Create the gamemaster agent with both A2A and MCP tools
         agent = Agent(
             # model=optional,
             # tools= List of the A2A and MCP tools,
+            tools=all_tools,
             system_prompt=SYSTEM_PROMPT
         )
 except Exception as e:
